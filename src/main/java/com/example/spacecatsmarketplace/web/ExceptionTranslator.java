@@ -5,6 +5,7 @@ import static java.net.URI.create;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.ProblemDetail.forStatusAndDetail;
 
+import com.example.spacecatsmarketplace.featureToggle.exception.FeatureToggleNotEnabledException;
 import com.example.spacecatsmarketplace.service.exception.ProductNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,11 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     problemDetail.setType(create("product-not-found"));
     problemDetail.setTitle("Product Not Found");
     return ResponseEntity.status(NOT_FOUND).body(problemDetail);
+  }
+
+  @ExceptionHandler(FeatureToggleNotEnabledException.class)
+  public ResponseEntity<String> handleFeatureToggleNotEnabled(FeatureToggleNotEnabledException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 
   @Override

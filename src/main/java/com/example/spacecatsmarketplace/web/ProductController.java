@@ -2,6 +2,8 @@ package com.example.spacecatsmarketplace.web;
 
 import com.example.spacecatsmarketplace.domain.Product;
 import com.example.spacecatsmarketplace.dto.ProductDto;
+import com.example.spacecatsmarketplace.featureToggle.FeatureToggles;
+import com.example.spacecatsmarketplace.featureToggle.annotation.FeatureToggle;
 import com.example.spacecatsmarketplace.service.ProductService;
 import com.example.spacecatsmarketplace.service.mapper.ProductMapper;
 import jakarta.validation.Valid;
@@ -27,6 +29,7 @@ public class ProductController {
   private final ProductMapper productMapper;
 
   @GetMapping
+  @FeatureToggle(FeatureToggles.ASTRONAUT_PRODUCTS)
   public ResponseEntity<List<ProductDto>> getAllProducts() {
     return ResponseEntity.ok(productService.getAllProducts().stream()
         .map(productMapper::toProductDto)
@@ -34,11 +37,13 @@ public class ProductController {
   }
 
   @GetMapping("{productId}")
+  @FeatureToggle(FeatureToggles.ASTRONAUT_PRODUCTS)
   public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
     return ResponseEntity.ok(productMapper.toProductDto(productService.getProductById(productId)));
   }
 
   @PostMapping
+  @FeatureToggle(FeatureToggles.ASTRONAUT_PRODUCTS)
   public ResponseEntity<ProductDto> createProduct(@RequestBody @Valid ProductDto productDto) {
     return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.toProductDto(
         productService.createProduct(productMapper.toProduct(productDto))));
