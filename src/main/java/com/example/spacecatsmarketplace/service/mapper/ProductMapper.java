@@ -11,13 +11,14 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
 
+  @Mapping(target = "productReference", source = "productReference")
   @Mapping(target = "name", source = "name")
   @Mapping(target = "description", source = "description")
   @Mapping(target = "price", source = "price")
   @Mapping(target = "categories", source = "categories", qualifiedByName = "toCategoriesString")
   ProductDto toProductDto(Product product);
 
-  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "productReference", expression = "java(java.util.UUID.randomUUID())")
   @Mapping(target = "name", source = "name")
   @Mapping(target = "description", source = "description")
   @Mapping(target = "price", source = "price")

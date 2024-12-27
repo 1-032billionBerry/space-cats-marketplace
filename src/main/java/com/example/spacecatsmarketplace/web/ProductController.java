@@ -6,6 +6,7 @@ import com.example.spacecatsmarketplace.service.ProductService;
 import com.example.spacecatsmarketplace.service.mapper.ProductMapper;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +34,10 @@ public class ProductController {
         .toList());
   }
 
-  @GetMapping("{productId}")
-  public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
-    return ResponseEntity.ok(productMapper.toProductDto(productService.getProductById(productId)));
+  @GetMapping("{productReference}")
+  public ResponseEntity<ProductDto> getProductById(@PathVariable UUID productReference) {
+    return ResponseEntity.ok(productMapper.toProductDto(
+        productService.getProductByReference(productReference)));
   }
 
   @PostMapping
@@ -44,17 +46,17 @@ public class ProductController {
         productService.createProduct(productMapper.toProduct(productDto))));
   }
 
-  @PutMapping("{productId}")
-  public ResponseEntity<ProductDto> updateProduct(@PathVariable Long productId,
+  @PutMapping("{productReference}")
+  public ResponseEntity<ProductDto> updateProduct(@PathVariable UUID productReference,
       @RequestBody ProductDto productDto) {
     Product product = productMapper.toProduct(productDto);
-    product.setId(productId);
+    product.setProductReference(productReference);
     return ResponseEntity.ok(productMapper.toProductDto(productService.updateProduct(product)));
   }
 
-  @DeleteMapping("{productId}")
-  public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
-    productService.deleteProductById(productId);
+  @DeleteMapping("{productReference}")
+  public ResponseEntity<Void> deleteProduct(@PathVariable UUID productReference) {
+    productService.deleteProductByReference(productReference);
     return ResponseEntity.noContent().build();
   }
 }

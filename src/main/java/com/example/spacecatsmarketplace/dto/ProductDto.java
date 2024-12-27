@@ -7,16 +7,21 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
+@Jacksonized
 public class ProductDto {
+
+  private UUID productReference;
 
   @NotBlank(message = "Name is mandatory")
   @Size(max = 100, message = "Name cannot exceed 100 characters")

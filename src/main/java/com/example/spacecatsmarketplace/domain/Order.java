@@ -1,6 +1,7 @@
 package com.example.spacecatsmarketplace.domain;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Order {
 
-  private Long id;
+  private UUID orderNumber;
   private List<Product> products;
 }
