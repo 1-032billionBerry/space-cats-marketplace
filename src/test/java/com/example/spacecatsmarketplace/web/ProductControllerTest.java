@@ -11,6 +11,7 @@ import com.example.spacecatsmarketplace.service.ProductService;
 import com.example.spacecatsmarketplace.service.mapper.ProductMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +36,14 @@ class ProductControllerTest {
   private Product product;
   private ProductDto productDto;
 
+  private static final UUID PRODUCT_REFERENCE = UUID.fromString("00000000-0000-0000-0000-000000000001");
+
   @BeforeEach
   void setUp() {
     objectMapper = new ObjectMapper();
 
     product = Product.builder()
-        .id(1L)
+        .productReference(PRODUCT_REFERENCE)
         .name("Test Product")
         .description("Test Description")
         .price(100)
@@ -69,11 +72,11 @@ class ProductControllerTest {
   }
 
   @Test
-  void testGetProductById() throws Exception {
-    when(productService.getProductById(1L)).thenReturn(product);
+  void testGetProductByReference() throws Exception {
+    when(productService.getProductByReference(PRODUCT_REFERENCE)).thenReturn(product);
     when(productMapper.toProductDto(product)).thenReturn(productDto);
 
-    mockMvc.perform(get("/api/v1/products/1"))
+    mockMvc.perform(get("/api/v1/products/" + PRODUCT_REFERENCE))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.name").value("Test Product"))
         .andExpect(jsonPath("$.description").value("Test Description"))
@@ -208,7 +211,7 @@ class ProductControllerTest {
     when(productService.updateProduct(product)).thenReturn(product);
     when(productMapper.toProductDto(product)).thenReturn(productDto);
 
-    mockMvc.perform(put("/api/v1/products/1")
+    mockMvc.perform(put("/api/v1/products/" + PRODUCT_REFERENCE)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(productDto)))
         .andExpect(status().isOk())
@@ -220,9 +223,9 @@ class ProductControllerTest {
 
   @Test
   void testDeleteProduct() throws Exception {
-    doNothing().when(productService).deleteProductById(1L);
+    doNothing().when(productService).deleteProductByReference(PRODUCT_REFERENCE);
 
-    mockMvc.perform(delete("/api/v1/products/1"))
+    mockMvc.perform(delete("/api/v1/products/" + PRODUCT_REFERENCE))
         .andExpect(status().isNoContent());
   }
 }

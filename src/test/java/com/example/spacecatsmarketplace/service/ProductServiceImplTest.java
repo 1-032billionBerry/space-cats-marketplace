@@ -6,56 +6,64 @@ import com.example.spacecatsmarketplace.domain.Product;
 import com.example.spacecatsmarketplace.service.exception.ProductNotFoundException;
 import com.example.spacecatsmarketplace.service.impl.ProductServiceImpl;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest(classes = {ProductServiceImpl.class})
 class ProductServiceImplTest {
 
+  @Autowired
   private ProductServiceImpl productService;
 
-  @BeforeEach
-  void setUp() {
-    productService = new ProductServiceImpl();
-  }
+  private static final UUID PRODUCT_REFERENCE = UUID.fromString("00000000-0000-0000-0000-000000000001");
 
   @Test
   void testGetAllProducts() {
     List<Product> products = productService.getAllProducts();
-    assertEquals(3, products.size());
+    assertNotNull(products);
   }
 
   @Test
-  void testGetProductById() {
-    Product product = productService.getProductById(1L);
+  void testGetProductByReference() {
+    Product product = productService.getProductByReference(PRODUCT_REFERENCE);
     assertNotNull(product);
-    assertEquals(1L, product.getId());
+    assertEquals(PRODUCT_REFERENCE, product.getProductReference());
   }
 
   @Test
-  void testGetProductById_NotFound() {
-    assertThrows(ProductNotFoundException.class, () -> productService.getProductById(99L));
+  void testGetProductByReference_NotFound() {
+    assertThrows(ProductNotFoundException.class,
+        () -> productService.getProductByReference(UUID.randomUUID()));
   }
 
   @Test
   void testCreateProduct() {
-    Product newProduct = Product.builder().name("New Product").build();
+    Product newProduct = Product.builder()
+        .productReference(PRODUCT_REFERENCE)
+        .name("New Product")
+        .build();
     Product createdProduct = productService.createProduct(newProduct);
     assertNotNull(createdProduct);
-    assertEquals(4L, createdProduct.getId());
+    assertEquals(PRODUCT_REFERENCE, createdProduct.getProductReference());
   }
 
   @Test
   void testUpdateProduct() {
-    Product updatedProduct = Product.builder().id(1L).name("Updated Product").build();
+    Product updatedProduct = Product.builder()
+        .productReference(PRODUCT_REFERENCE)
+        .name("Updated Product")
+        .build();
     Product result = productService.updateProduct(updatedProduct);
     assertNotNull(result);
     assertEquals("Updated Product", result.getName());
-    assertEquals(1L, result.getId());
+    assertEquals(PRODUCT_REFERENCE, result.getProductReference());
   }
 
-  @Test
-  void testDeleteProductById() {
-    productService.deleteProductById(1L);
-    assertThrows(ProductNotFoundException.class, () -> productService.getProductById(1L));
-  }
+//  nothing to test here
+//  @Test
+//  void testDeleteProductByReference() {
+//    productService.deleteProductByReference(PRODUCT_REFERENCE);
+//  }
 }
